@@ -1,0 +1,29 @@
+services:
+  goapp:
+    container_name: hotel-reservation-goapp
+    environment:
+      - FROM=env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 1323:1323
+    depends_on:
+      - db
+  db:
+    container_name: hotel-reservation-db
+    image: postgres:14.3
+    environment:
+      - FROM=env
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DBNAME=${POSTGRES_DBNAME}
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: {}

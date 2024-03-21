@@ -1,8 +1,10 @@
 build:
-	@go build -o ./bin/api
-
+	@docker compose build goapp
+	
 run: build
-	@./bin/api
+	@docker compose up -d
 
 test:
 	@go test -v ./...
+
+
