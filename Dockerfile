@@ -17,6 +17,7 @@ COPY . .
 CMD ["air", "-c", ".air.toml"]
 
 
+
 # SKIP THE BUILDING OF THE GO APPLICATION DURING DEVELOPMENT
 # Build the Go application and create an executable named hotel-reservation in /bin
 # RUN go build -v -o /bin/hotel-reservation

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/dayachettri/hotel-reservation/api"
@@ -30,4 +31,5 @@ func main() {
 	apiv1.GET("/user/:id", api.HandleGetUser)
 
 	e.Logger.Fatal(e.Start(*listenAddr))
+	fmt.Println("exited main")
 }

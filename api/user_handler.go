@@ -10,7 +10,7 @@ import (
 func HandleGetUsers(c echo.Context) error {
 	u := types.User{
 		FirstName: "James",
-		LastName:  "At the watercooler",
+		LastName:  "Noob",
 	}
 
 	return c.JSON(http.StatusOK, u)

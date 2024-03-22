@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"os"
 
@@ -21,9 +20,9 @@ func NewPostgresStore() *PostgresStore {
 
 func (d *PostgresStore) Connect(url string) (*sql.DB, error) {
 	databaseURL := os.Getenv(url)
-	if databaseURL == "" {
-		return nil, errors.New("missing DATABASE_URL environment variable")
-	}
+	// if databaseURL == "" {
+	// 	return nil, errors.New("missing DATABASE_URL environment variable")
+	// }
 
 	database, err := sql.Open("postgres", databaseURL)
 	if err != nil {
