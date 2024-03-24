@@ -2,8 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/dayachettri/hotel-reservation/api"
 	"github.com/dayachettri/hotel-reservation/db"
@@ -14,22 +14,32 @@ import (
 func main() {
 	util.RequiredEnvVars()
 	postgresStore := db.NewPostgresStore()
-	db, err := postgresStore.Connect("DATABASE_URL")
+	err := postgresStore.Connect("DATABASE_URL")
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer postgresStore.DB.Close()
 
 	listenAddr := flag.String("listenAddr", ":1323", "The listen address of the API server")
 	flag.Parse()
 
 	e := echo.New()
+	e.HTTPErrorHandler = customHTTPErrorHandler
 
 	apiv1 := e.Group("api/v1")
-	apiv1.GET("/user", api.HandleGetUsers)
-	apiv1.GET("/user/:id", api.HandleGetUser)
+
+	userHandler := api.NewUserHandler(db.NewPostgresUserStore(postgresStore.DB))
+	apiv1.GET("/user", userHandler.HandleGetUsers)
+	apiv1.GET("/user/:id", userHandler.HandleGetUser)
 
 	e.Logger.Fatal(e.Start(*listenAddr))
-	fmt.Println("exited main")
+}
+
+func customHTTPErrorHandler(err error, c echo.Context) {
+	code := http.StatusInternalServerError
+	if he, ok := err.(*echo.HTTPError); ok {
+		code = he.Code
+	}
+	c.JSON(code, map[string]string{"error": err.Error()})
 }
