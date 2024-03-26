@@ -13,15 +13,15 @@ type Database interface {
 	Connect(string) error
 }
 
-type PostgresStore struct {
+type PostgresDB struct {
 	DB *sql.DB
 }
 
-func NewPostgresStore() *PostgresStore {
-	return &PostgresStore{}
+func NewPostgresDB() *PostgresDB {
+	return &PostgresDB{}
 }
 
-func (d *PostgresStore) Connect(url string) error {
+func (d *PostgresDB) Connect(url string) error {
 	databaseURL := os.Getenv(url)
 	if databaseURL == "" {
 		return errors.New("missing DATABASE_URL environment variable")

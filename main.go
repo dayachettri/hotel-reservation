@@ -13,13 +13,14 @@ import (
 
 func main() {
 	util.RequiredEnvVars()
-	postgresStore := db.NewPostgresStore()
-	err := postgresStore.Connect("DATABASE_URL")
+	postgres := db.NewPostgresDB()
+
+	err := postgres.Connect("DATABASE_URL")
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer postgresStore.DB.Close()
+	defer postgres.DB.Close()
 
 	listenAddr := flag.String("listenAddr", ":1323", "The listen address of the API server")
 	flag.Parse()
@@ -29,7 +30,8 @@ func main() {
 
 	apiv1 := e.Group("api/v1")
 
-	userHandler := api.NewUserHandler(db.NewPostgresUserStore(postgresStore.DB))
+	userHandler := api.NewUserHandler(db.NewPostgresUserStore(postgres.DB))
+	apiv1.POST("/user", userHandler.HandleCreateUser)
 	apiv1.GET("/user", userHandler.HandleGetUsers)
 	apiv1.GET("/user/:id", userHandler.HandleGetUser)
 
