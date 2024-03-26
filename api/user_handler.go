@@ -26,7 +26,6 @@ func NewUserHandler(userStore db.UserStore) *UserHandler {
 }
 
 func (h *UserHandler) HandleCreateUser(c echo.Context) error {
-	fmt.Println("hiii")
 	params := &types.CreateUserParams{}
 	if err := c.Bind(&params); err != nil {
 		return err
