@@ -7,4 +7,5 @@
 - authentication and authorization -> JWT tokens
 - hotels -> CRUD API -> JSON
 - rooms -> CRUD API -> JSON
+- users -> CURD API -> JSON
 - scripts -> database management -> seeding, migration
