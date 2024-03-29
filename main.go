@@ -31,9 +31,11 @@ func main() {
 	apiv1 := e.Group("api/v1")
 
 	userHandler := api.NewUserHandler(db.NewPostgresUserStore(postgres.DB))
+	apiv1.PUT("/user/:id", userHandler.HandleUpdateUser)
 	apiv1.POST("/user", userHandler.HandleCreateUser)
 	apiv1.GET("/user", userHandler.HandleGetUsers)
 	apiv1.GET("/user/:id", userHandler.HandleGetUser)
+	apiv1.DELETE("/user/:id", userHandler.HandleDeleteUser)
 
 	e.Logger.Fatal(e.Start(*listenAddr))
 }

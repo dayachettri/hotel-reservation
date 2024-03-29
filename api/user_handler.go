@@ -24,6 +24,37 @@ func NewUserHandler(userStore db.UserStore) *UserHandler {
 	}
 }
 
+// TODO:Add request params validation
+func (h *UserHandler) HandleUpdateUser(c echo.Context) error {
+	id := c.Param("id")
+	if _, err := strconv.Atoi(id); err != nil {
+		return c.JSON(http.StatusBadRequest,
+			&Response{
+				Message:    "invalid id format only integers accepted",
+				StatusCode: http.StatusBadRequest,
+			})
+	}
+
+	params := &types.UpdateUserParams{}
+	if err := c.Bind(&params); err != nil {
+		return err
+	}
+
+	if err := params.Validate(); err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	err := h.userStore.UpdateUser(c.Request().Context(), params, id)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, &Response{
+		Message:    "user updated successfully",
+		StatusCode: http.StatusOK,
+	})
+}
+
 func (h *UserHandler) HandleCreateUser(c echo.Context) error {
 	params := &types.CreateUserParams{}
 	if err := c.Bind(&params); err != nil {
@@ -31,7 +62,7 @@ func (h *UserHandler) HandleCreateUser(c echo.Context) error {
 	}
 
 	if err := params.Validate(); err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	user, err := types.NewUserfromParams(params)
@@ -46,6 +77,26 @@ func (h *UserHandler) HandleCreateUser(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, createdUser)
+}
+
+func (h *UserHandler) HandleDeleteUser(c echo.Context) error {
+	id := c.Param("id")
+	if _, err := strconv.Atoi(id); err != nil {
+		return c.JSON(http.StatusBadRequest,
+			&Response{
+				Message:    "invalid id format only integers accepted",
+				StatusCode: http.StatusBadRequest,
+			})
+	}
+
+	if err := h.userStore.DeleteUser(c.Request().Context(), id); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, &Response{
+		Message:    "user deleted successfully",
+		StatusCode: http.StatusOK,
+	})
 }
 
 func (h *UserHandler) HandleGetUser(c echo.Context) error {
